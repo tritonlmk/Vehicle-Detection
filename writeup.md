@@ -61,15 +61,63 @@ Below is the visualization of the HOG features of an example
 
 ### 2. Extract histogram and binned color features from the picture
 
-Then the histogram and binned color features from the picture
-![alt text][image1]
+Then the histogram and binned color features from the picture, using the function in code block 2.
 
-I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
+```python
+def bin_spatial(img, size):
+    # using luminance color channel from yuv color spaces 
+#     img_yuv = cv2.cvtColor(img, cv2.COLOR_RGB2YUV)
+    img_luma = img[:,:,0]
+    color_features = cv2.resize(img_luma, (size,size)).ravel()
+    return color_features
 
-Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
+# function to compute color histogram features
+def color_hist(img, nbins, bin_range=(0,256)):
+    rhist = np.histogram(img[:,:,0], bins=nbins, range=bin_range)
+    ghist = np.histogram(img[:,:,1], bins=nbins, range=bin_range)
+    bhist = np.histogram(img[:,:,2], bins=nbins, range=bin_range)
+    hist_features = np.concatenate((rhist[0], ghist[0], bhist[0]))
+    return hist_features
+```
 
+Finally a function is usend in code block 2 to extract and combine thoes features together.
 
-![alt text][image2]
+```python
+# define a function to extract featrues from a single feature
+def single_features(img, nbins, size, orient, pix_per_cell, cell_per_block):
+    # create a list to append feature vectors to
+    features = []
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2YUV)
+    img_forhog = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    # histogram features
+    hist_features = color_hist(img, nbins)
+    # color space featuresorient, pix_per_cell, cell_per_block, block_n
+    color_features = bin_spatial(img, size)
+    # hog features of every channel in the image
+    hog_features = []
+    
+    hog_features.append(get_hog_features(img_forhog, orient, pix_per_cell, cell_per_block, vis=False))
+    hog_features = np.ravel(hog_features)
+    features = np.hstack((hist_features, color_features, hog_features))
+    
+    return features
+
+# funciton to extract features from an image
+def extract_features(imgs, nbins, size, orient, pix_per_cell, cell_per_block):
+    # create a list to append feature vectors to
+    features = []
+    # iterate through the list of images
+    for file in imgs:
+        file_features = []
+        img = mpimg.imread(file)
+        file_features = single_features(img, 32, 32, 9, 8, 2)
+        features.append(file_features)
+    
+    return features
+```
+
+You can see that I changed the RGB picture to YUV color spaces and used the Y channel as a feature, for the Y channel is insulated from the colors and can represent the vehicle shape.
+
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
