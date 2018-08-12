@@ -1,5 +1,4 @@
-# Writeup Template
-
+# Writeup
 
 ---
 
@@ -17,7 +16,7 @@ The steps of this project are the following:
 [//]: # (Image References)
 [image1]: ./output_images/hog_orig.png
 [image2]: ./output_images/hog_show.png
-[image3]: ./output_images/sliding_windows.jpg
+[image3]: ./output_images/slide_window.png
 [image4]: ./output_images/sliding_window.jpg
 [image5]: ./output_images/bboxes_and_heat.png
 [image6]: ./output_images/labels_map.png
@@ -159,9 +158,10 @@ Test accuracy of SVC is 0.9964
 
 ## Sliding Window Search
 
-### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
+### 1.How a sliding window search is implemented.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+I searched the lower part of the picture which is the part that vehicles can appear, which has the yscale from 400 to 700.
+I first search the part using a 64x64 square window to search the ares.
 
 ![alt text][image3]
 
