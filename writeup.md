@@ -35,7 +35,7 @@ You're reading it!
 
 HOG features is the most important features in this Machine Learning project, it can provide a test accurancy of 0.99. While using other features but HOG features can only barely reach the test accuracy of 0.93
 
-#### 1. Explain how (and identify where in your code) the HOG features is extracted from the training images.
+#### 1. How the HOG features is extracted from the training images.
 
 The code for this step is contained in the second code cell of the IPython notebook.
 
@@ -52,8 +52,7 @@ def get_hog_features(img, orient, pix_per_cell, cell_per_block, vis=False, featu
     else:
         return return_list
 ```
-
-I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
+Before the HOG features is extracted, I convert the image into grayscale using `cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)` and then extract the HOG features from the grayscale picture. The color channel convertion is not included in the function above, however, it is done before the picture is feed into this function.
 
 ![alt text][image1]
 
