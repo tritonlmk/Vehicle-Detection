@@ -33,7 +33,7 @@ You're reading it!
 
 ## Histogram of Oriented Gradients (HOG)
 
-HOG features is the most important features in this Machine Learning project, it can provide a test accurancy of 0.99. While using other features but HOG features can only barely reach the test accuracy of 0.93
+HOG features is the most important features in this Machine Learning project, it can provide a test accuracy of 0.99. While using other features but HOG features can only barely reach the test accuracy of 0.93
 
 ### 1.Extract the HOG features and histogram & binned color features from the training images.
 
@@ -119,11 +119,11 @@ def extract_features(imgs, nbins, size, orient, pix_per_cell, cell_per_block):
 You can see that I changed the RGB picture to YUV color spaces and used the Y channel as a feature, for the Y channel is insulated from the colors and can represent the vehicle shape.
 
 
-#### 2. Explain how you settled on your final choice of HOG parameters.
+### 3. How the HOG parameters is settled.
 
-I tried various combinations of parameters and...
+I tried various combinations of parameters and final choice is a trade between the accuaracy and speed. I choose 9 `orientations`, 8 `pix_per_cell` and 2 `cell_per_block`.
 
-#### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
+### 4.How the classifier is trainde using selected features.
 
 I trained a linear SVM using...
 
