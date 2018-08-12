@@ -33,9 +33,25 @@ You're reading it!
 
 ### Histogram of Oriented Gradients (HOG)
 
-#### 1. Explain how (and identify where in your code) you extracted HOG features from the training images.
+HOG features is the most important features in this Machine Learning project, it can provide a test accurancy of 0.99. While using other features but HOG features can only barely reach the test accuracy of 0.93
 
-The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
+#### 1. Explain how (and identify where in your code) the HOG features is extracted from the training images.
+
+The code for this step is contained in the second code cell of the IPython notebook.
+
+```python
+def get_hog_features(img, orient, pix_per_cell, cell_per_block, vis=False, feature_vec=True):
+    # all default arguments
+    return_list = hog(img, orientations=orient, pixels_per_cell=(pix_per_cell, pix_per_cell), \
+                               cells_per_block=(cell_per_block, cell_per_block), transform_sqrt=False, \
+                               visualise = vis, feature_vector=feature_vec, block_norm='L2-Hys')
+    
+    if vis == True:
+        hog_img = return_list[1]
+        return return_list[0], hog_img
+    else:
+        return return_list
+```
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
