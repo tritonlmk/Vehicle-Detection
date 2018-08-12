@@ -122,10 +122,11 @@ You can see that I changed the RGB picture to YUV color spaces and used the Y ch
 ### 3. How the HOG parameters is settled.
 
 I tried various combinations of parameters and final choice is a trade between the accuaracy and speed. I choose 9 `orientations`, 8 `pix_per_cell` and 2 `cell_per_block`.
+This combination can provide enough accuracy and the computing speed is not too slow. While smaller parameters can result in smaller accuracy and larger parameters can make the training slow.
 
 ### 4.How the classifier is trainde using selected features.
 
-I trained a linear SVM using...
+I first extract the training data from the given database. I used all the pictures "that is a vehicel" but use only part of the non-vehicles pictures to form the training set, which is all the data from './non-vehicles/Extras/*.png' and part of the pictures from the 
 
 ### Sliding Window Search
 
