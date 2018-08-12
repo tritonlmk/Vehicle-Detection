@@ -126,7 +126,31 @@ This combination can provide enough accuracy and the computing speed is not too 
 
 ### 4.How the classifier is trainde using selected features.
 
-I first extract the training data from the given database. I used all the pictures "that is a vehicel" but use only part of the non-vehicles pictures to form the training set, which is all the data from './non-vehicles/Extras/*.png' and part of the pictures from the 
+I first extract the training data from the given database. I used all the pictures "that is a vehicel" but use only part of the non-vehicles pictures to form the training set, which is all the data from `./non-vehicles/Extras/*.png` and 1000 of the pictures from the 
+`./non-vehicles/GTI/*.png`. This is because I want to make the total numbers of vehicles & not-vehicles are generally the same and the training data set can contain enough catalogs.
+
+Then I set shuffle the data and split it into a training set and a test set by a protion of 0.2.
+This is containde in the code block 5:
+
+```python
+    data_cars = glob.glob('./vehicles/*/*.png')
+    data_notcars = glob.glob('./non-vehicles/Extras/*.png')
+#     data_notcars_argu = glob.glob('./non-vehicles/GTI/*.png')
+#     data_notcars_argu = shuffle(data_notcars_argu, n_samples=1000)
+#     data_notcars.extend(data_notcars_argu)
+    
+    # set shuffle parameter to Ture to randomly shuffle the training data(although the default value of shuffle is True already...)
+    data_cars_train, data_cars_test = train_test_split(data_cars, test_size=0.2, shuffle=True)
+    data_notcars_train, data_notcars_test = train_test_split(data_notcars, test_size=0.2, shuffle=True)
+    
+```
+Then I use the `clf = GridSearchCV(svr, parameters)` function to find a good parameters combination to fit the model(using 300 of pictures). The paremeters found is `kernal: rbf` and 'c: 5'.
+Finally I trained the model and got a test accuracy of 0.9964
+
+```
+107 Seconds to train SVC
+Test accuracy of SVC is 0.9964
+```
 
 ### Sliding Window Search
 
