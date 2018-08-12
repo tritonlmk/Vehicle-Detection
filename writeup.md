@@ -17,11 +17,10 @@ The steps of this project are the following:
 [image1]: ./output_images/hog_orig.png
 [image2]: ./output_images/hog_show.png
 [image3]: ./output_images/slide_window.png
-[image4]: ./output_images/heatmap.jpg
-[image5]: ./output_images/draw_img.jpg
+[image4]: ./output_images/boxes_detected.jpg
+[image5]: ./output_images/heatmap.jpg
 [image6]: ./output_images/draw_img.jpg
-[image7]: ./output_images/output_bboxes.png
-[video1]: ./project_video.mp4
+[video1]: ./project_video_output.mp4
 
 
 ---
@@ -189,7 +188,7 @@ img_tosearch = img[ystart:ystop,:,:]
     hog_features = get_hog_features(gray, orient, pix_per_cell, cell_per_block, vis=False, feature_vec=False)
 ```
 
-### 2. How to optimize the performance of the classifier? How to eliminate the false positive windows.
+### 2. How to optimize the performance of the classifier?
 
 I then search the picture using multiple size of windows. I choose the paremeters of the sliding window to best fit the shape of a vehicle and do not do too many predictions in order to save time. It is just testing and parameter tuning and it really takes much effort.
 In the code block 8 I wrote a functions to do this.
@@ -205,41 +204,57 @@ def search_slice(img, svc, X_scaler):
     return img_out, bboxes
 ```
 
-To eliminate false positive windows, I first generate a heat map using the code in the code block 9. Using a thershold to eliminate windows that do not have number of positive detection. 
-
-![alt text][image4]
-![alt text][image5]
 ---
 
 ## Video Implementation
 
-### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result](./project_video.mp4)
+### 1. A link to the final video output is provided below.
+Here's a [https://github.com/tritonlmk/Vehicle-Detection/blob/master/project_video_output.mp4](./project_video.mp4)
 
 
-### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
+### 2.How the filter for false positives and method for combining overlapping bounding boxes is implemented.
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
 
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
+To eliminate false positive windows, I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions. Then `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap. I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.
 
-### Here are six frames and their corresponding heatmaps:
-
+![alt text][image4]
 ![alt text][image5]
-
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
 ![alt text][image6]
 
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
+The code is contained in the code block 11.
+```python
+def add_heat(img, bbox_list, threshold):
+    heatmap = np.zeros_like(img[:,:,0]).astype(np.float)
+    # Iterate through list of bboxes
+    for box in bbox_list:
+        heatmap[box[0][1]:box[1][1], box[0][0]:box[1][0]] += 1
+        
+    heatmap[heatmap <= threshold] = 0
+    heatmap = np.clip(heatmap, 0, 255)
+    return heatmap
 
+def draw_labeled_bboxes(img, labels):
+    # Iterate through all detected cars
+    for car_number in range(1, labels[1]+1):
+        # Find pixels with each car_number label value
+        nonzero = (labels[0] == car_number).nonzero()
+        # Identify x and y values of those pixels
+        nonzeroy = np.array(nonzero[0])
+        nonzerox = np.array(nonzero[1])
+        # Define a bounding box based on min/max x and y
+        bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox), np.max(nonzeroy)))
+        # Draw the box on the image
+        cv2.rectangle(img, bbox[0], bbox[1], (0,0,255), 6)
+    # Return the image
+    return img
 
-
+```
 ---
 
 ## Discussion
 
-### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+## 1. Discuss some problems
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+Generally, there are two problem. The first one is that in some frames is still apperas to have some false positive windows. This can be solved by a better selection of windows scale combination for searching and design some logics to filter it.
+The second one is that it is too slow to compute, I think that the code still have much to optimeze and the it also has relationship with a cleverer combination of window scale and search area for searching.
 
