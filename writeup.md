@@ -15,8 +15,8 @@ The steps of this project are the following:
 * Estimate a bounding box for vehicles detected.
 
 [//]: # (Image References)
-[image1]: ./output_images/car_not_car.png
-[image2]: ./output_images/HOG_example.jpg
+[image1]: ./output_images/hog_orig.png
+[image2]: ./output_images/hog_show.png
 [image3]: ./output_images/sliding_windows.jpg
 [image4]: ./output_images/sliding_window.jpg
 [image5]: ./output_images/bboxes_and_heat.png
@@ -26,17 +26,16 @@ The steps of this project are the following:
 
 
 ---
-### Writeup / README
+## Writeup / README
 
-#### 1. A Writeup / README
 
 You're reading it!
 
-### Histogram of Oriented Gradients (HOG)
+## Histogram of Oriented Gradients (HOG)
 
 HOG features is the most important features in this Machine Learning project, it can provide a test accurancy of 0.99. While using other features but HOG features can only barely reach the test accuracy of 0.93
 
-#### 1. How the HOG features is extracted from the training images.
+### 1.Extract the HOG features and histogram & binned color features from the training images.
 
 The code for this step is contained in the second code cell of the IPython notebook.
 
@@ -55,6 +54,14 @@ def get_hog_features(img, orient, pix_per_cell, cell_per_block, vis=False, featu
 ```
 Before the HOG features is extracted, I convert the image into grayscale using `cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)` and then extract the HOG features from the grayscale picture. The color channel convertion is not included in the function above, however, it is done before the picture is feed into this function.
 
+Below is the visualization of the HOG features of an example
+
+![alt text][image1]
+![alt text][image2]
+
+### 2. Extract histogram and binned color features from the picture
+
+Then the histogram and binned color features from the picture
 ![alt text][image1]
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
