@@ -17,9 +17,9 @@ The steps of this project are the following:
 [image1]: ./output_images/hog_orig.png
 [image2]: ./output_images/hog_show.png
 [image3]: ./output_images/slide_window.png
-[image4]: ./output_images/sliding_window.jpg
-[image5]: ./output_images/bboxes_and_heat.png
-[image6]: ./output_images/labels_map.png
+[image4]: ./output_images/heatmap.jpg
+[image5]: ./output_images/draw_img.jpg
+[image6]: ./output_images/draw_img.jpg
 [image7]: ./output_images/output_bboxes.png
 [video1]: ./project_video.mp4
 
@@ -165,11 +165,50 @@ I first search the part using a 64x64 square window to search the ares.
 
 ![alt text][image3]
 
-### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
+This part is containded in the code block 4.
+The actual sliding window used in the video is contained in the find_cars funciton. Because I want to extract the HOG features of a picture just once in order to save time.
+This funciton is containded in the code block 6.
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+```python
+img_tosearch = img[ystart:ystop,:,:]
+    ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2YUV)
+    if scale != 1:
+        imshape = ctrans_tosearch.shape
+        ctrans_tosearch = cv2.resize(ctrans_tosearch, (np.int(imshape[1]/scale), np.int(imshape[0]/scale)))
+
+    gray = cv2.cvtColor(ctrans_tosearch, cv2.COLOR_RGB2GRAY)
+    # some parameters
+    nxblocks = (gray.shape[1] // pix_per_cell) - cell_per_block + 1
+    nyblocks = (gray.shape[0] // pix_per_cell) - cell_per_block + 1
+
+    nblocks_per_window = (window // pix_per_cell) - cell_per_block + 1
+    nxsteps = (nxblocks - nblocks_per_window) // cells_per_step + 1
+    nysteps = (nyblocks - nblocks_per_window) // cells_per_step + 1
+
+    # Compute individual channel HOG features for the entire image
+    hog_features = get_hog_features(gray, orient, pix_per_cell, cell_per_block, vis=False, feature_vec=False)
+```
+
+### 2. How to optimize the performance of the classifier? How to eliminate the false positive windows.
+
+I then search the picture using multiple size of windows. I choose the paremeters of the sliding window to best fit the shape of a vehicle and do not do too many predictions in order to save time. It is just testing and parameter tuning and it really takes much effort.
+In the code block 8 I wrote a functions to do this.
+```python
+def search_slice(img, svc, X_scaler):
+    bboxes = []
+    img_out = np.copy(img)
+    for i in range(4):
+        scale = i+1
+        img_out, bboxes_part = find_cars(img_out, 400, 500, scale, svc, X_scaler)
+        bboxes.extend(bboxes_part)
+    
+    return img_out, bboxes
+```
+
+To eliminate false positive windows, I first generate a heat map using the code in the code block 9. Using a thershold to eliminate windows that do not have number of positive detection. 
 
 ![alt text][image4]
+![alt text][image5]
 ---
 
 ## Video Implementation
